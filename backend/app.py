@@ -21,9 +21,9 @@ from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from question_bank import QuestionBank
-from content_filter import sanitize_answer
-import judge as judge_module
+from .question_bank import QuestionBank
+from .content_filter import sanitize_answer
+import .judge as judge_module
 
 app = FastAPI(title="Creative Clash Backend", version="0.1.0-mvp")
 
