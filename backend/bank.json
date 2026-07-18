@@ -1,0 +1,252 @@
+[
+  {
+    "id": 1,
+    "text": "What would you name a new planet?",
+    "uses": 0
+  },
+  {
+    "id": 2,
+    "text": "Invent a new holiday and describe how it's celebrated.",
+    "uses": 0
+  },
+  {
+    "id": 3,
+    "text": "If you could have any superpower for one day, what would it be?",
+    "uses": 0
+  },
+  {
+    "id": 4,
+    "text": "Write a haiku about your favorite food.",
+    "uses": 0
+  },
+  {
+    "id": 5,
+    "text": "What would you put in a time capsule for aliens to find?",
+    "uses": 0
+  },
+  {
+    "id": 6,
+    "text": "Invent a new color and describe what it looks like.",
+    "uses": 0
+  },
+  {
+    "id": 7,
+    "text": "What's the worst advice you've ever heard?",
+    "uses": 0
+  },
+  {
+    "id": 8,
+    "text": "If animals could talk, which would be the most interesting?",
+    "uses": 1
+  },
+  {
+    "id": 9,
+    "text": "Design a new emoji and explain what it means.",
+    "uses": 0
+  },
+  {
+    "id": 10,
+    "text": "What would you do with a million dollars?",
+    "uses": 1
+  },
+  {
+    "id": 11,
+    "text": "Describe a school subject that doesn't exist yet.",
+    "uses": 0
+  },
+  {
+    "id": 12,
+    "text": "What would the last invention on Earth be?",
+    "uses": 1
+  },
+  {
+    "id": 13,
+    "text": "Invent a sport that combines two existing sports.",
+    "uses": 0
+  },
+  {
+    "id": 14,
+    "text": "What's a rule every house should have?",
+    "uses": 0
+  },
+  {
+    "id": 15,
+    "text": "Describe your dream treehouse.",
+    "uses": 0
+  },
+  {
+    "id": 16,
+    "text": "What would you name your autobiography?",
+    "uses": 0
+  },
+  {
+    "id": 17,
+    "text": "Invent a gadget that solves a tiny everyday annoyance.",
+    "uses": 0
+  },
+  {
+    "id": 18,
+    "text": "What sound does silence make?",
+    "uses": 0
+  },
+  {
+    "id": 19,
+    "text": "Describe a city built entirely underwater.",
+    "uses": 0
+  },
+  {
+    "id": 20,
+    "text": "If your pet could send you one text message, what would it say?",
+    "uses": 0
+  },
+  {
+    "id": 21,
+    "text": "Invent a new musical instrument (describe its sound).",
+    "uses": 0
+  },
+  {
+    "id": 22,
+    "text": "What would you teach a robot first?",
+    "uses": 0
+  },
+  {
+    "id": 23,
+    "text": "Describe the most useless superpower imaginable.",
+    "uses": 0
+  },
+  {
+    "id": 24,
+    "text": "What's the secret ingredient in your imaginary restaurant's signature dish?",
+    "uses": 0
+  },
+  {
+    "id": 25,
+    "text": "Invent a excuse for being late that nobody has used before.",
+    "uses": 0
+  },
+  {
+    "id": 26,
+    "text": "What would a museum exhibit about today look like in 200 years?",
+    "uses": 0
+  },
+  {
+    "id": 27,
+    "text": "Describe a vehicle that travels through clouds.",
+    "uses": 0
+  },
+  {
+    "id": 28,
+    "text": "What's the best name for a cloud shaped like a hat?",
+    "uses": 0
+  },
+  {
+    "id": 29,
+    "text": "Invent a game played only in zero gravity.",
+    "uses": 0
+  },
+  {
+    "id": 30,
+    "text": "What would you say in a speech to your future self?",
+    "uses": 0
+  },
+  {
+    "id": 31,
+    "text": "Describe a library where the books talk back.",
+    "uses": 0
+  },
+  {
+    "id": 32,
+    "text": "What's a chore that could be turned into a fun competition?",
+    "uses": 0
+  },
+  {
+    "id": 33,
+    "text": "Invent a new flavor of ice cream nobody has tried.",
+    "uses": 0
+  },
+  {
+    "id": 34,
+    "text": "What would you build if gravity worked sideways for a day?",
+    "uses": 0
+  },
+  {
+    "id": 35,
+    "text": "Describe the world's most unnecessary invention.",
+    "uses": 1
+  },
+  {
+    "id": 36,
+    "text": "What's a question you wish more people asked you?",
+    "uses": 0
+  },
+  {
+    "id": 37,
+    "text": "Invent a new type of weather.",
+    "uses": 0
+  },
+  {
+    "id": 38,
+    "text": "Describe your ideal treehouse-turned-spaceship.",
+    "uses": 0
+  },
+  {
+    "id": 39,
+    "text": "What would you name a village hidden inside a mountain?",
+    "uses": 0
+  },
+  {
+    "id": 40,
+    "text": "Invent a shop that only sells one strange item.",
+    "uses": 0
+  },
+  {
+    "id": 41,
+    "text": "What's the funniest thing a talking toaster could say?",
+    "uses": 0
+  },
+  {
+    "id": 42,
+    "text": "Describe a park designed entirely for grown-ups to play in.",
+    "uses": 1
+  },
+  {
+    "id": 43,
+    "text": "What would you name a newly discovered dinosaur?",
+    "uses": 0
+  },
+  {
+    "id": 44,
+    "text": "Invent a tradition your family will keep for 100 years.",
+    "uses": 0
+  },
+  {
+    "id": 45,
+    "text": "Describe the last text message a time traveler would send.",
+    "uses": 0
+  },
+  {
+    "id": 46,
+    "text": "What's a smell that should be turned into a perfume but isn't?",
+    "uses": 1
+  },
+  {
+    "id": 47,
+    "text": "Invent a new Olympic event.",
+    "uses": 0
+  },
+  {
+    "id": 48,
+    "text": "What would a diary entry from a house look like?",
+    "uses": 0
+  },
+  {
+    "id": 49,
+    "text": "Describe a bridge that connects two very different worlds.",
+    "uses": 0
+  },
+  {
+    "id": 50,
+    "text": "What's the best thing to yell when you win at anything?",
+    "uses": 0
+  }
+]
