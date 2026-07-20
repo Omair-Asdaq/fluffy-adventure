@@ -28,10 +28,12 @@ import requests
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
-GEMINI_URL = (
-    "https://generativelanguage.googleapis.com/v1beta/models/"
-    "gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY
-)
+GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL_FALLBACKS = [
+    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-3.5-flash",
+]
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 REQUEST_TIMEOUT_SECONDS = 6
@@ -60,6 +62,13 @@ No explanations, no markdown, no extra keys, no missing keys."""
 
 class JudgeError(Exception):
     pass
+
+
+def _gemini_url(model: str) -> str:
+    return (
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{model}:generateContent?key={GEMINI_API_KEY}"
+    )
 
 
 def _build_user_prompt(question: str, players: dict) -> str:
@@ -102,7 +111,7 @@ def _call_gemini(question: str, players: dict) -> dict:
         "contents": [{"parts": [{"text": _build_user_prompt(question, players)}]}],
         "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
     }
-    resp = requests.post(GEMINI_URL, json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
+    resp = requests.post(_gemini_url(GEMINI_MODEL), json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
     resp.raise_for_status()
     data = resp.json()
     text = data["candidates"][0]["content"]["parts"][0]["text"]
@@ -144,10 +153,19 @@ def ask_gemini(prompt: str, system_prompt: str | None = None) -> str:
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": 0.7},
     }
-    resp = requests.post(GEMINI_URL, json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
-    resp.raise_for_status()
-    data = resp.json()
-    return data["candidates"][0]["content"]["parts"][0]["text"]
+
+    last_error = None
+    for model in GEMINI_MODEL_FALLBACKS:
+        try:
+            resp = requests.post(_gemini_url(model), json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
+            resp.raise_for_status()
+            data = resp.json()
+            return data["candidates"][0]["content"]["parts"][0]["text"]
+        except Exception as exc:  # noqa: BLE001 - fail over to the next available model
+            last_error = exc
+            continue
+
+    raise JudgeError(f"all Gemini models failed: {last_error}")
 
 
 def heuristic_fallback_score(question: str, players: dict) -> dict:
