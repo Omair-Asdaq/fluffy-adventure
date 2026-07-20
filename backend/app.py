@@ -21,9 +21,14 @@ from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from .question_bank import QuestionBank
-from .content_filter import sanitize_answer
-from . import judge as judge_module
+try:
+    from question_bank import QuestionBank
+    from content_filter import sanitize_answer
+    import judge as judge_module
+except ImportError:
+    from .question_bank import QuestionBank
+    from .content_filter import sanitize_answer
+    from . import judge as judge_module
 
 app = FastAPI(title="Creative Clash Backend", version="0.1.0-mvp")
 
@@ -60,11 +65,21 @@ class JudgeRequest(BaseModel):
     answers: List[PlayerAnswers]
 
 
+class AskRequest(BaseModel):
+    prompt: str
+    system_prompt: Optional[str] = None
+
+
 # ---------- endpoints ----------
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/ping")
+def ping():
+    return {"ok": True, "message": "pong"}
 
 
 @app.post("/get_questions")
@@ -119,6 +134,22 @@ def judge(req: JudgeRequest):
         scores[q_key] = question_scores
 
     return {"scores": scores}
+
+
+@app.post("/ask")
+def ask(req: AskRequest):
+    prompt = req.prompt.strip()
+    if not prompt:
+        raise HTTPException(400, "prompt is empty")
+    if len(prompt) > 8000:
+        raise HTTPException(400, "prompt is too long")
+
+    try:
+        response_text = judge_module.ask_gemini(prompt, req.system_prompt)
+    except Exception as exc:  # noqa: BLE001 - return a clear server error to callers
+        raise HTTPException(503, f"AI request failed: {exc}") from exc
+
+    return {"response": response_text}
 
 
 @app.get("/bank_status")

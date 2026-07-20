@@ -131,6 +131,25 @@ def _call_groq(question: str, players: dict, model: str) -> dict:
     return _validate_schema(parsed, players.keys())
 
 
+def ask_gemini(prompt: str, system_prompt: str | None = None) -> str:
+    """
+    Generic Gemini text generation helper for server-side tools.
+    Returns the raw text response and raises JudgeError on provider failure.
+    """
+    if not GEMINI_API_KEY:
+        raise JudgeError("GEMINI_API_KEY not configured")
+
+    payload = {
+        "system_instruction": {"parts": [{"text": system_prompt or "You are a helpful assistant."}]},
+        "contents": [{"parts": [{"text": prompt}]}],
+        "generationConfig": {"temperature": 0.7},
+    }
+    resp = requests.post(GEMINI_URL, json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
+    resp.raise_for_status()
+    data = resp.json()
+    return data["candidates"][0]["content"]["parts"][0]["text"]
+
+
 def heuristic_fallback_score(question: str, players: dict) -> dict:
     """
     Used only when every AI provider fails. Criteria (spec):
