@@ -30,7 +30,7 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
 GEMINI_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
-    "gemini-flash-latest:generateContent?key=" + GEMINI_API_KEY
+    "gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY
 )
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
