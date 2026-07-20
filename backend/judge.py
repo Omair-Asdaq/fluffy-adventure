@@ -25,6 +25,8 @@ import os
 import re
 import requests
 
+import google.generativeai as genai
+
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
@@ -37,6 +39,7 @@ GEMINI_MODEL_FALLBACKS = [
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 REQUEST_TIMEOUT_SECONDS = 6
+GEMINI_TEMPERATURE = 0.7
 
 SYSTEM_PROMPT = """You are a judge for a creative party game.
 Rate each player's answer on:
@@ -64,11 +67,34 @@ class JudgeError(Exception):
     pass
 
 
-def _gemini_url(model: str) -> str:
-    return (
-        "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"{model}:generateContent?key={GEMINI_API_KEY}"
+_GEMINI_CONFIGURED = False
+
+
+def _configure_gemini() -> None:
+    global _GEMINI_CONFIGURED
+    if _GEMINI_CONFIGURED:
+        return
+    if not GEMINI_API_KEY:
+        raise JudgeError("GEMINI_API_KEY not configured")
+    genai.configure(api_key=GEMINI_API_KEY)
+    _GEMINI_CONFIGURED = True
+
+
+def _get_gemini_model(model_name: str, system_prompt: str) -> genai.GenerativeModel:
+    _configure_gemini()
+    return genai.GenerativeModel(model_name, system_instruction=system_prompt)
+
+
+def _generate_gemini_text(model_name: str, prompt: str, system_prompt: str | None, temperature: float) -> str:
+    model = _get_gemini_model(model_name, system_prompt or "You are a helpful assistant.")
+    response = model.generate_content(
+        prompt,
+        generation_config={
+            "temperature": temperature,
+            "response_mime_type": "application/json" if temperature == 0 else "text/plain",
+        },
     )
+    return getattr(response, "text", "")
 
 
 def _build_user_prompt(question: str, players: dict) -> str:
@@ -104,17 +130,12 @@ def _extract_json(text: str) -> dict:
 
 
 def _call_gemini(question: str, players: dict) -> dict:
-    if not GEMINI_API_KEY:
-        raise JudgeError("GEMINI_API_KEY not configured")
-    payload = {
-        "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
-        "contents": [{"parts": [{"text": _build_user_prompt(question, players)}]}],
-        "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
-    }
-    resp = requests.post(_gemini_url(GEMINI_MODEL), json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
-    resp.raise_for_status()
-    data = resp.json()
-    text = data["candidates"][0]["content"]["parts"][0]["text"]
+    _configure_gemini()
+    response = _get_gemini_model(GEMINI_MODEL, SYSTEM_PROMPT).generate_content(
+        _build_user_prompt(question, players),
+        generation_config={"temperature": 0, "response_mime_type": "application/json"},
+    )
+    text = getattr(response, "text", "")
     parsed = _extract_json(text)
     return _validate_schema(parsed, players.keys())
 
@@ -145,22 +166,10 @@ def ask_gemini(prompt: str, system_prompt: str | None = None) -> str:
     Generic Gemini text generation helper for server-side tools.
     Returns the raw text response and raises JudgeError on provider failure.
     """
-    if not GEMINI_API_KEY:
-        raise JudgeError("GEMINI_API_KEY not configured")
-
-    payload = {
-        "system_instruction": {"parts": [{"text": system_prompt or "You are a helpful assistant."}]},
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.7},
-    }
-
     last_error = None
     for model in GEMINI_MODEL_FALLBACKS:
         try:
-            resp = requests.post(_gemini_url(model), json=payload, timeout=REQUEST_TIMEOUT_SECONDS)
-            resp.raise_for_status()
-            data = resp.json()
-            return data["candidates"][0]["content"]["parts"][0]["text"]
+            return _generate_gemini_text(model, prompt, system_prompt, GEMINI_TEMPERATURE)
         except Exception as exc:  # noqa: BLE001 - fail over to the next available model
             last_error = exc
             continue
