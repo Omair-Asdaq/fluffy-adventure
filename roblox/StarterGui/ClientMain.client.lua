@@ -129,6 +129,7 @@ submitButton.Parent = roundFrame
 
 local currentCharLimit = 120
 local hasSubmittedThisRound = false
+local roundToken = 0
 
 local function submitAnswer()
 	if hasSubmittedThisRound then
@@ -190,6 +191,9 @@ RemoteEvents.RoundStart.OnClientEvent:Connect(function(data)
 	resultsFrame.Visible = false
 	roundFrame.Visible = true
 
+	roundToken += 1
+	local myToken = roundToken
+
 	hasSubmittedThisRound = false
 	answerBox.Text = ""
 	submitButton.Text = "Submit"
@@ -203,12 +207,12 @@ RemoteEvents.RoundStart.OnClientEvent:Connect(function(data)
 	-- Simple countdown; server is the source of truth for the actual deadline.
 	task.spawn(function()
 		local remaining = data.timeSeconds
-		while remaining > 0 and roundFrame.Visible do
+		while remaining > 0 and roundFrame.Visible and myToken == roundToken do
 			timerLabel.Text = tostring(remaining) .. "s"
 			task.wait(1)
 			remaining -= 1
 		end
-		if roundFrame.Visible and not hasSubmittedThisRound then
+		if roundFrame.Visible and myToken == roundToken and not hasSubmittedThisRound then
 			submitAnswer() -- auto-submit whatever's typed when time runs out
 		end
 	end)
