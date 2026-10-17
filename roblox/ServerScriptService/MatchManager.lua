@@ -153,7 +153,7 @@ local function rankPlayers(totals)
 	-- totals: { [playerKey] = { points=n, rawScore=n, timeMs=n } }
 	local ranked = {}
 	for key, t in pairs(totals) do
-		table.insert(ranked, { key = key, points = t.points, rawScore = t.rawScore, timeMs = t.timeMs })
+		table.insert(ranked, { key = key, points = t.points, rawScore = t.rawScore, timeMs = t.timeMs, coinFlip = math.random() })
 	end
 
 	table.sort(ranked, function(a, b)
@@ -167,7 +167,7 @@ local function rankPlayers(totals)
 			return a.timeMs < b.timeMs
 		end
 		-- Edge case: fully tied. Deterministic-but-unpredictable coin flip.
-		return math.random() < 0.5
+		return a.coinFlip < b.coinFlip
 	end)
 
 	return ranked
