@@ -20,14 +20,9 @@ local RETRY_WAIT_SECONDS = 0.5
 
 local PlayerDataService = {}
 
-local function hasWriteBudget()
-	local budget = DataStoreService:GetRequestBudgetForRequestType(Enum.DataStoreRequestType.SetIncrementAsync)
-	return budget ~= Enum.DataStoreRequestBudgetStatus.Exceeded
-end
-
 local function hasWriteBudgetFor(requestType)
 	local budget = DataStoreService:GetRequestBudgetForRequestType(requestType)
-	return budget ~= Enum.DataStoreRequestBudgetStatus.Exceeded
+	return type(budget) == "number" and budget > 0
 end
 
 --- Returns the player's answered-question history, or {} if unavailable.
